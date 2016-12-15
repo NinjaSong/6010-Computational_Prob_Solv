@@ -1,0 +1,50 @@
+/*
+ ============================================================================
+ Name        : queueing-model-simulation.c
+ Author      : Hongyang Wang
+ Version     :
+ Copyright   : 漏 Fall 2016 CSE 6010 Hongyang Wang
+ Description : Hello World in C, Ansi-style
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "PriorityQueue.h"
+
+typedef struct {
+	int id;
+
+} student;
+
+void free_student(void * p) {
+	p = (student *) p;
+	free(p);
+	p = NULL;
+}
+
+int cmp(void* p1, void* p2) {
+	student *stu1 = (student *) p1, *stu2 = (student *) p2;
+	return stu1->id - stu2->id;
+}
+
+int main(void) {
+	PriorityQueue pq;
+	pq_init(&pq, &cmp);
+	for (int i = 0; i < 10; i++) {
+		student *s = (student *) malloc(sizeof(student));
+		s->id = i % 4;
+		pq_push(&pq, s);
+		printf("id=%d\n", s->id);
+	}
+	printf("size=%d\n", pq_size(&pq));
+	for (int i = 0; i < 10; i++) {
+		student *s = pq_peek(&pq);
+		printf("peek id=%d\n", s->id);
+		s = pq_pop(&pq);
+		free(s);
+	}
+	printf("size=%d\n", pq_size(&pq));
+	pq_clear(&pq, &free_student);
+	printf("size=%d\n", pq_size(&pq));
+}
